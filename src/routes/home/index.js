@@ -1,14 +1,18 @@
 /* global window */
 import React from 'react'
-import { connect } from 'dva'
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 
-const Home = () => {
-
+const Home = ({ dispatch, app }) => {
+	const router =() => {
+		dispatch(routerRedux.push('/users'));
+		console.log(app)
+	}
   return (
-    <div>
+    <div onClick={router}>
       whr:i am home comp
     </div>
   )
 }
 
-export default connect(({ app, loading }) => ({ app, loading }))(Home)
+export default connect(({ app, loading, dispatch }) => ({ app, loading, dispatch }))(Home)
