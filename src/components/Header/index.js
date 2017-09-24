@@ -1,22 +1,12 @@
 import React from 'react';
-import { Menu, Icon } from 'antd';
-import { Link } from 'dva/router';
+import { Layout } from 'antd';
+const { Header } = Layout;
 
-function Header({ location }) {
+export default function ({ location }) {
   return (
-    <Menu
-      selectedKeys={[location.pathname]}
-      mode="horizontal"
-      theme="dark"
-    >
-      <Menu.Item key="/users">
-        <Link to="/users"><Icon type="bars" />Users</Link>
-      </Menu.Item>
-      <Menu.Item key="/">
-        <Link to="/"><Icon type="home" />Home</Link>
-      </Menu.Item>
-    </Menu>
+    <Header style={{ color: '#fff'}}>
+      我是logo
+    </Header>
   );
 }
 
-export default Header;

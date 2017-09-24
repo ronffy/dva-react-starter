@@ -10,23 +10,25 @@ import '../themes/index.less'
 import './app.less'
 import Error from './error'
 
-const App = ({ children, dispatch, app, loading, location }) => {
+const App = ({ children, dispatch, loading, location, menu }) => {
 
   return (
     <Layout>
       <Header location={location} />
       <Layout>
-        <Sider width={200} style={{ background: '#fff' }}>
-          <Menus />
+        <Sider width={200} style={{background: '#fff'}}>
+          <Menus list={ menu } />
         </Sider>
-        <Layout style={{ padding: '0 24px 24px' }}>
+        <Layout style={{ padding: '0 24px 24px'}}>
           <Breadcrumbs />
-          <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
+          <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 500 }}>
             {children}
           </Content>
         </Layout>
       </Layout>
-      <Footer />
+      {
+        // <Footer/>
+      }
     </Layout>
   )
 }
@@ -35,8 +37,7 @@ App.propTypes = {
   children: PropTypes.element.isRequired,
   location: PropTypes.object,
   dispatch: PropTypes.func,
-  app: PropTypes.object,
   loading: PropTypes.object,
 }
 
-export default withRouter(connect(({ app, loading }) => ({ app, loading }))(App))
+export default withRouter(connect(({ loading, menu }) => ({ loading, menu }))(App))

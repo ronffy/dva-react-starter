@@ -11,9 +11,9 @@ function Routers({ history, app }) {
     {
       path: '/',
       component: () => import('./routes/home/'),
-    }, 
+    },
     {
-      path: '/users',
+      path: '/nav1/users',
       models: () => [import('./models/users')],
       component: () => import('./routes/users/'),
     },

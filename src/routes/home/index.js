@@ -5,7 +5,7 @@ import { routerRedux } from 'dva/router';
 
 const Home = ({ dispatch, app }) => {
 	const router =() => {
-		dispatch(routerRedux.push('/users'));
+		dispatch(routerRedux.push('/nav1/users'));
 		console.log(app)
 	}
   return (
