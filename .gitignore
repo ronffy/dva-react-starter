@@ -1,5 +1,11 @@
 dist
 node_modules
-.DS_Store
+yarn.lock
+npm-debug.log
+# ide
+.idea
 
-.idea/
+# Mac General
+.DS_Store
+.AppleDouble
+.LSOverride

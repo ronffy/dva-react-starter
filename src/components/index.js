@@ -1,5 +1,9 @@
-export Header from './Header';
-export Footer from './Footer';
-export Menus from './Menus';
-export Breadcrumbs from './Breadcrumbs';
-export Users from './Users';
+import Loader from './Loader'
+import * as Layout from './Layout/index.js'
+import Page from './Page'
+
+export {
+  Layout,
+  Loader,
+  Page,
+}

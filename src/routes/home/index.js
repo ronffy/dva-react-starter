@@ -1,18 +1,26 @@
-/* global window */
 import React from 'react'
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
+import PropTypes from 'prop-types'
+import { connect } from 'dva'
+import { color } from 'utils'
+import styles from './index.less'
 
-const Home = ({ dispatch, app }) => {
-	const router =() => {
-		dispatch(routerRedux.push('/nav1/users'));
-		console.log(app)
-	}
+function Home ({ home, loading }) {
   return (
-    <div onClick={router}>
-      whr:i am home comp
+    <div>
+      我是home
+      我是home
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      woshi home end
     </div>
   )
 }
 
-export default connect(({ app, loading, dispatch }) => ({ app, loading, dispatch }))(Home)
+Home.propTypes = {
+  home: PropTypes.object,
+  loading: PropTypes.object,
+}
+
+export default connect(({ home, loading }) => ({ home, loading }))(Home)

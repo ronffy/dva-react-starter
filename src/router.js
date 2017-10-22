@@ -1,32 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { routerRedux, Switch, Route, Redirect } from 'dva/router';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Switch, Route, Redirect, routerRedux } from 'dva/router'
+import dynamic from 'dva/dynamic'
+import App from 'routes/app'
+
 const { ConnectedRouter } = routerRedux
-import dynamic from 'dva/dynamic';
-import App from './routes/app';
 
-function Routers({ history, app }) {
-
+const Routers = function ({ history, app }) {
+  const error = dynamic({
+    app,
+    component: () => import('./routes/error'),
+  })
   const routes = [
     {
-      path: '/',
+      path: '/home',
+      models: () => [import('./models/home')],
       component: () => import('./routes/home/'),
+    }, 
+    {
+      path: '/login',
+      models: () => [import('./models/login')],
+      component: () => import('./routes/login/'),
     },
     {
-      path: '/nav1/users',
-      models: () => [import('./models/users')],
-      component: () => import('./routes/users/'),
+      path: '/chart/channel',
+      models: () => [import('./models/channel')],
+      component: () => import('./routes/channel/'),
     },
-    {
-      path: '*',
-      component: () => import('./routes/error/')
-    }
-  ];
+  ]
 
   return (
-    <ConnectedRouter history={history} routes={routes}>
+    <ConnectedRouter history={history}>
       <App>
         <Switch>
+          <Route exact path="/"/>
           {
             routes.map(({ path, ...dynamics }, key) => (
               <Route key={key}
@@ -39,10 +46,11 @@ function Routers({ history, app }) {
               />
             ))
           }
+          <Route component={error} />
         </Switch>
       </App>
     </ConnectedRouter>
-  );
+  )
 }
 
 Routers.propTypes = {
@@ -50,4 +58,4 @@ Routers.propTypes = {
   app: PropTypes.object,
 }
 
-export default Routers;
+export default Routers
