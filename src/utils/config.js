@@ -1,24 +1,19 @@
-const APIV1 = '/api/v1'
-const APIV2 = '/api/v2'
+let apiPre = '/api/v1'
+// let apiPre = 'https://zlcx.sunlands.wang';
 
-module.exports = {
-  name: 'Sunlands',
-  prefix: 'antdAdmin',
-  footerText: 'Ant Design Admin  © 2017 zuiidea',
-  logo: '/logo.png',
-  iconFontCSS: '/iconfont.css',
-  iconFontJS: '/iconfont.js',
-  CORS: [],
-  openPages: ['/login'],
-  apiPrefix: '/api/v1',
-  APIV1,
-  APIV2,
-  api: {
-    userLogin: `${APIV1}/user/login`,
-    userLogout: `${APIV1}/user/logout`,
-    userInfo: `${APIV1}/userInfo`,
-    user: `${APIV1}/user/:id`,
-    home: `${APIV1}/home`,
-    menus: `${APIV1}/menus`,
-  },
+// if (process.env.NODE_ENV === 'development') {
+//   apiPre = 'https://testboss.sunlands.wang';
+// }
+
+const apis = {
+  exam: `${apiPre}/adcampaign/exam`, // 题库
+  _test: `${apiPre}/_test`, // 题库
+}
+
+const CORS = [apiPre];
+
+export {
+  apiPre,
+  apis,
+  CORS,
 }

@@ -1,46 +1,24 @@
 /* global window */
 import axios from 'axios'
 import qs from 'qs'
-import jsonp from 'jsonp'
-import lodash from 'lodash'
-import pathToRegexp from 'path-to-regexp'
-import { message } from 'antd'
+import jsonp from 'jsonp';
 import { CORS } from './config'
 
-const fetch = (options) => {
+const timeout = 30000;
+
+const fetch = (url, options) => {
   let {
     method = 'get',
     data,
     fetchType,
-    url,
   } = options
-
-  const cloneData = lodash.cloneDeep(data)
-
-  try {
-    let domin = ''
-    if (url.match(/[a-zA-z]+:\/\/[^/]*/)) {
-      domin = url.match(/[a-zA-z]+:\/\/[^/]*/)[0]
-      url = url.slice(domin.length)
-    }
-    const match = pathToRegexp.parse(url)
-    url = pathToRegexp.compile(url)(data)
-    for (let item of match) {
-      if (item instanceof Object && item.name in cloneData) {
-        delete cloneData[item.name]
-      }
-    }
-    url = domin + url
-  } catch (e) {
-    message.error(e.message)
-  }
 
   if (fetchType === 'JSONP') {
     return new Promise((resolve, reject) => {
       jsonp(url, {
         param: `${qs.stringify(data)}&callback`,
         name: `jsonp_${new Date().getTime()}`,
-        timeout: 4000,
+        timeout,
       }, (error, result) => {
         if (error) {
           reject(error)
@@ -50,29 +28,64 @@ const fetch = (options) => {
     })
   }
 
+
+  /*
+    // 添加请求拦截器
+    axios.interceptors.request.use(function (config) {
+      // 在发送请求之前做些什么
+      return config;
+    }, function (error) {
+      // 对请求错误做些什么
+      return Promise.reject(error);
+    });
+  
+    // 添加响应拦截器
+    axios.interceptors.response.use(function (response) {
+      // 对响应数据做点什么
+      return response;
+    }, function (error) {
+      // 对响应错误做点什么
+      return Promise.reject(error);
+    });
+  */
+
+  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   switch (method.toLowerCase()) {
     case 'get':
       return axios.get(url, {
-        params: cloneData,
+        params: data,
+        timeout,
       })
     case 'delete':
       return axios.delete(url, {
-        data: cloneData,
+        data: data,
       })
     case 'post':
-      return axios.post(url, cloneData)
+      const opts = {
+        url,
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          ...(options.headers || {}),
+        },
+        data: data,
+      };
+      return axios(opts);
     case 'put':
-      return axios.put(url, cloneData)
+      return axios.put(url, data)
     case 'patch':
-      return axios.patch(url, cloneData)
+      return axios.patch(url, data)
     default:
-      return axios(options)
+      return axios({
+        timeout,
+        ...options,
+      })
   }
 }
 
-export default function request (options) {
-  if (options.url && options.url.indexOf('//') > -1) {
-    const origin = `${options.url.split('//')[0]}//${options.url.split('//')[1].split('/')[0]}`
+export default function request(url, options = {}) {
+  if (url && url.indexOf('//') > -1) {
+    const origin = `${url.split('//')[0]}//${url.split('//')[1].split('/')[0]}`
     if (window.location.origin !== origin) {
       if (CORS && CORS.indexOf(origin) > -1) {
         options.fetchType = 'CORS'
@@ -82,31 +95,25 @@ export default function request (options) {
     }
   }
 
-  return fetch(options).then((response) => {
-    let { statusText, status, data } = response
-    if (data instanceof Array) {
-      data = {
-        list: data,
-      }
-    }
-    return Promise.resolve({
-      success: true,
-      message: statusText,
-      statusCode: status,
-      ...data,
+  return fetch(url, options).then((response) => {
+    let { statusText, status, data } = response;
+    return Promise.resolve({ //eslint-disable-line
+      statusText,
+      status,
+      data,
     })
   }).catch((error) => {
-    const { response } = error
-    let msg
-    let statusCode
+    let status;
+    let statusText;
+    let { response } = error
     if (response && response instanceof Object) {
-      const { data, statusText } = response
-      statusCode = response.status
-      msg = data.message || statusText
+      const { data } = response
+      status = response.status
+      statusText = data.message || response.statusText;
     } else {
-      statusCode = 600
-      msg = error.message || 'Network Error'
+      status = 600
+      statusText = error.message || 'Network Error'
     }
-    return Promise.reject({ success: false, statusCode, message: msg })
+    return Promise.reject({ status, statusText })
   })
 }

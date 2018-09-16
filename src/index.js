@@ -1,27 +1,22 @@
-import { message } from 'antd'
-import dva from 'dva'
+import dva from 'dva';
 import createLoading from 'dva-loading'
-import createHistory from 'history/createBrowserHistory'
-import 'babel-polyfill'
-
-const ERROR_MSG_DURATION = 3; // 3 秒
+import './index.less';
 
 // 1. Initialize
-const app = dva({
+const app = dva();
+
+// 2. Plugins
+app.use({
   ...createLoading({
     effects: true,
-  }),
-  history: createHistory(),
-  onError (error) {
-    message.error(error.message, ERROR_MSG_DURATION)
-  },
-})
+  })
+});
 
-// 2. Model
-app.model(require('./models/app'))
+// 3. Model
+app.model(require('./models/app').default);
 
-// 3. Router
-app.router(require('./router'))
+// 4. Router
+app.router(require('./router').default);
 
-// 4. Start
-app.start('#root')
+// 5. Start
+app.start('#root');
